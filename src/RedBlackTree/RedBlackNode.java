@@ -6,4 +6,10 @@ public class RedBlackNode<T extends Comparable> {
     RedBlackNode<T> parent;
     RedBlackNode<T> left;
     RedBlackNode<T> right;
+
+    public RedBlackNode(T key) {
+        this.key = key;
+    }
+
+    public RedBlackNode() { }
 }

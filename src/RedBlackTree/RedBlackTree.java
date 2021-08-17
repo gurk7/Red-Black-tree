@@ -111,16 +111,17 @@ public class RedBlackTree<T extends Comparable> {
                     z = z.parent.parent;
                 }
                 // Case 5
-                else
+                else {
                     // The uncle color is BLACK
                     if (z == z.parent.left) {
                         z = z.parent;
                         rightRotate(z);
                     }
-                // Case 3
-                z.parent.color = Color.BLACK;
-                z.parent.parent.color = Color.RED;
-                leftRotate(z.parent.parent);
+                    // Case 6
+                    z.parent.color = Color.BLACK;
+                    z.parent.parent.color = Color.RED;
+                    leftRotate(z.parent.parent);
+                }
             }
 
         }
