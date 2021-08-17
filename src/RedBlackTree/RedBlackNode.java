@@ -1,6 +1,6 @@
 package RedBlackTree;
 
-public class RedBlackNode<T> {
+public class RedBlackNode<T extends Comparable> {
     T key;
     Color color;
     RedBlackNode<T> parent;

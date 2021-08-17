@@ -1,6 +1,6 @@
 package RedBlackTree;
 
-public class RedBlackTree<T> {
+public class RedBlackTree<T extends Comparable> {
     RedBlackNode<T> root;
     RedBlackNode<T> Nil;
 
@@ -13,7 +13,7 @@ public class RedBlackTree<T> {
         root = Nil;
     }
 
-    private void LeftRotate(RedBlackNode<T> x) {
+    private void leftRotate(RedBlackNode<T> x) {
         RedBlackNode<T> right = x.right;
         x.right = right.left;
         if(right.left != Nil)
@@ -47,7 +47,83 @@ public class RedBlackTree<T> {
         y.parent = left;
     }
 
-    public void insert(T key) {
+    public void insert(RedBlackNode<T> z) {
+        RedBlackNode<T> y = Nil;
+        RedBlackNode<T> x = root;
 
+        while(x != Nil) {
+            y = x;
+            // if z.key < x.key
+            if (z.key.compareTo(x.key) < 0)
+                x = x.left;
+            else
+                x = x.right;
+        }
+        z.parent = y;
+        // Case z is the only node in the tree - the root
+        if(z.parent == Nil)
+            root = z;
+        else
+            // if z.key < y.key
+            if (z.key.compareTo(y.key) < 0)
+                y.left = z;
+            else
+                y.right = z;
+        z.left = Nil;
+        z.right = Nil;
+        z.color = Color.RED;
+
+        insertFix(z);
+    }
+
+    private void insertFix(RedBlackNode<T> z) {
+        while(z.parent.color == Color.RED) {
+            // loop invariant - z.parent.parent.color is BLACK. (guaranteed by the RB properties).
+            if(z.parent == z.parent.parent.left) {
+                RedBlackNode<T> uncle = z.parent.parent.right;
+                // Case 1
+                if(uncle.color == Color.RED) {
+                    z.parent.color = Color.BLACK;
+                    uncle.color = Color.BLACK;
+                    z.parent.parent.color = Color.RED;
+                    z = z.parent.parent;
+                }
+                // Case 2
+                else
+                    // The uncle color is BLACK
+                    if (z == z.parent.right) {
+                        z = z.parent;
+                        leftRotate(z);
+                    }
+                    // Case 3
+                    z.parent.color = Color.BLACK;
+                    z.parent.parent.color = Color.RED;
+                    rightRotate(z.parent.parent);
+            }
+            // same as then clause with "right" and "left" exchanged
+            else {
+                RedBlackNode<T> uncle = z.parent.parent.left;
+                // Case 4
+                if(uncle.color == Color.RED) {
+                    z.parent.color = Color.BLACK;
+                    uncle.color = Color.BLACK;
+                    z.parent.parent.color = Color.RED;
+                    z = z.parent.parent;
+                }
+                // Case 5
+                else
+                    // The uncle color is BLACK
+                    if (z == z.parent.left) {
+                        z = z.parent;
+                        rightRotate(z);
+                    }
+                // Case 3
+                z.parent.color = Color.BLACK;
+                z.parent.parent.color = Color.RED;
+                leftRotate(z.parent.parent);
+            }
+
+        }
+        root.color = Color.BLACK;
     }
 }
