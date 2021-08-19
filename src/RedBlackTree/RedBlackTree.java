@@ -134,7 +134,7 @@ public class RedBlackTree<T extends Comparable> {
 
     //region Deletion
     //Replaces the subtree rooted at u with a subtree rooted at v
-    public void transplant(RedBlackNode<T> u, RedBlackNode<T> v) {
+    private void transplant(RedBlackNode<T> u, RedBlackNode<T> v) {
         if(u.parent == Nil)
             root = v;
         else
@@ -146,12 +146,32 @@ public class RedBlackTree<T extends Comparable> {
     }
 
     //Returns the minimum node in the subtree rooted at x
-    public RedBlackNode<T> minimum(RedBlackNode<T> x) {
+    private RedBlackNode<T> minimum(RedBlackNode<T> x) {
         while(x.left != Nil)
             x = x.left;
         return x;
     }
 
+    public RedBlackNode<T> search(T key) {
+        RedBlackNode<T> cur = root;
+        while(cur != Nil) {
+            // if cur.key < key
+            if (cur.key.compareTo(key) < 0) {
+                cur = cur.right;
+            }
+            else {
+                // if cur.key = key
+                if(cur.key.compareTo(key) == 0) return cur;
+                else cur = cur.left; // cur.key > key
+            }
+        }
+        return cur;
+    }
+    //Delete node with key T from the RB-tree
+    public void delete(T key) {
+        RedBlackNode<T> z = search(key);
+        if(z != Nil) delete(z);
+    }
     //Delete node z from the RB-tree
     public void delete(RedBlackNode<T> z) {
         RedBlackNode<T> y = z, x;
@@ -187,7 +207,7 @@ public class RedBlackTree<T extends Comparable> {
          }
     }
 
-    public void deletionFix(RedBlackNode<T> x) {
+    private void deletionFix(RedBlackNode<T> x) {
         while(x != Nil && x.color == Color.BLACK) {
             if (x == x.parent.left) {
                 RedBlackNode<T> xSibling = x.parent.right;
