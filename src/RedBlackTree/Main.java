@@ -18,5 +18,8 @@ public class Main {
 
         Printer<Integer> printer = new Printer<Integer>();
         printer.print(redBlackTree);
+
+        redBlackTree.delete(17);
+        printer.print(redBlackTree)  ;
     }
 }
