@@ -20,6 +20,6 @@ public class Main {
         printer.print(redBlackTree);
 
         redBlackTree.delete(17);
-        printer.print(redBlackTree)  ;
+        printer.print(redBlackTree);
     }
 }
