@@ -13,6 +13,7 @@ public class RedBlackTree<T extends Comparable> {
         root = Nil;
     }
 
+    //region Rotations
     private void leftRotate(RedBlackNode<T> x) {
         RedBlackNode<T> right = x.right;
         x.right = right.left;
@@ -46,7 +47,9 @@ public class RedBlackTree<T extends Comparable> {
         left.right = y;
         y.parent = left;
     }
+    //endregion
 
+    //region Insertion
     public void insert(RedBlackNode<T> z) {
         RedBlackNode<T> y = Nil;
         RedBlackNode<T> x = root;
@@ -127,4 +130,127 @@ public class RedBlackTree<T extends Comparable> {
         }
         root.color = Color.BLACK;
     }
+    //endregion
+
+    //region Deletion
+    //Replaces the subtree rooted at u with a subtree rooted at v
+    public void transplant(RedBlackNode<T> u, RedBlackNode<T> v) {
+        if(u.parent == Nil)
+            root = v;
+        else
+            if(u == u.parent.left)
+                u.parent.left = v;
+            else
+                u.parent.right = v;
+        v.parent = u.parent;
+    }
+
+    //Returns the minimum node in the subtree rooted at x
+    public RedBlackNode<T> minimum(RedBlackNode<T> x) {
+        while(x.left != Nil)
+            x = x.left;
+        return x;
+    }
+
+    //Delete node z from the RB-tree
+    public void delete(RedBlackNode<T> z) {
+        RedBlackNode<T> y = z, x;
+        Color yOriginalColor = y.color;
+        if(z.left == Nil) {
+            x = z.right;
+            transplant(z, z.right);
+        }
+        else {
+            if (z.right == Nil) {
+                x = z.left;
+                transplant(z, z.left);
+            } else {
+                // z has two children
+                y = minimum(z.right); // y is the successor of z
+                yOriginalColor = y.color;
+                x = y.right;
+                if (y.parent == z) {
+                    x.parent = y; // Handling for the sentinel Nil
+                } else {
+                    transplant(y, y.right);
+                    y.right = z.right;
+                    y.right.parent = y;
+                }
+                transplant(z, y);
+                y.left = z.left;
+                y.left.parent = y;
+                y.color = z.color;
+            }
+        }
+         if(yOriginalColor == Color.BLACK) {
+             deletionFix(x);
+         }
+    }
+
+    public void deletionFix(RedBlackNode<T> x) {
+        while(x != Nil && x.color == Color.BLACK) {
+            if (x == x.parent.left) {
+                RedBlackNode<T> xSibling = x.parent.right;
+                // Case 1 - x's sibling is red
+                if(xSibling.color == Color.RED) {
+                    xSibling.color = Color.BLACK;
+                    x.parent.color = Color.RED;
+                    leftRotate(x.parent);
+                    xSibling = x.parent.right;
+                }
+                // Case 2 - x's sibling is black, and both of sibling's children are black
+                if(xSibling.left.color == Color.BLACK && xSibling.right.color == Color.BLACK) {
+                    xSibling.color = Color.RED;
+                    x = x.parent;
+                }
+                else {
+                    // Case 3 - x's sibling is black, and the sibling's left child is red while his right child is black
+                    if(xSibling.right.color == Color.BLACK) {
+                        xSibling.left.color = Color.BLACK;
+                        xSibling.color = Color.RED;
+                        rightRotate(xSibling);
+                        xSibling = xSibling.parent.right;
+                    }
+                    // Case 4 - x's sibling is black and the sibling's right child is red
+                    xSibling.color = x.parent.color;
+                    x.parent.color = Color.BLACK;
+                    xSibling.right.color = Color.BLACK;
+                    leftRotate(x.parent);
+                    x = root;
+                }
+            }
+            else {
+                // same as then clause with "right" and "left" exchanged
+                RedBlackNode<T> xSibling = x.parent.left;
+                // Case 5 - x's sibling is red
+                if(xSibling.color == Color.RED) {
+                    xSibling.color = Color.BLACK;
+                    x.parent.color = Color.RED;
+                    rightRotate(x.parent);
+                    xSibling = x.parent.left;
+                }
+                // Case 6 - x's sibling is black, and both of sibling's children are black
+                if(xSibling.left.color == Color.BLACK && xSibling.right.color == Color.BLACK) {
+                    xSibling.color = Color.RED;
+                    x = x.parent;
+                }
+                else {
+                    // Case 7 - x's sibling is black, and the sibling's right child is red while his left child is black
+                    if (xSibling.left.color == Color.BLACK) {
+                        xSibling.right.color = Color.BLACK;
+                        xSibling.color = Color.RED;
+                        leftRotate(xSibling);
+                        xSibling = xSibling.parent.left;
+                    }
+                    // Case 8 - x's sibling is black and the sibling's left child is red
+                    xSibling.color = x.parent.color;
+                    x.parent.color = Color.BLACK;
+                    xSibling.left.color = Color.BLACK;
+                    rightRotate(x.parent);
+                    x = root;
+                }
+            }
+        }
+    }
+    //endregion
 }
