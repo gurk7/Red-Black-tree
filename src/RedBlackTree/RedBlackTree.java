@@ -208,7 +208,7 @@ public class RedBlackTree<T extends Comparable> {
     }
 
     private void deletionFix(RedBlackNode<T> x) {
-        while(x != Nil && x.color == Color.BLACK) {
+        while(x != root && x.color == Color.BLACK) {
             if (x == x.parent.left) {
                 RedBlackNode<T> xSibling = x.parent.right;
                 // Case 1 - x's sibling is red
